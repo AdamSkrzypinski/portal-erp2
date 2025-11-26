@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es2016",             /* Wersja JavaScript wynikowego */
-    "module": "commonjs",           /* Standard modułów Node.js */
-    "rootDir": "./src",             /* Gdzie jest Twój kod TS */
-    "outDir": "./dist",             /* Gdzie ma trafić skompilowany kod JS */
-    "esModuleInterop": true,        /* KLUCZOWE: Pozwala na "import express from 'express'" */
+    "target": "es2016",
+    "module": "commonjs",
+    // "rootDir": "./src", 
+    "outDir": "./dist",
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "strict": true,                 /* Wymuszaj poprawne typy */
-    "skipLibCheck": true            /* Przyspiesza kompilację */
+    "strict": true,
+    "skipLibCheck": true
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "prisma/**/*"] 
 }

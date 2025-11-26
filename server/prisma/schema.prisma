@@ -1,0 +1,43 @@
+// server/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Tabela Dostawców (Użytkownicy portalu)
+model Supplier {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  nip       String?
+  orders    Order[]
+  createdAt DateTime @default(now())
+}
+
+// Statusy zamówienia
+enum OrderStatus {
+  NOWE
+  POTWIERDZONE
+  ODRZUCONE
+  WYSLANE
+}
+
+// Tabela Zamówień (Dane z ERP)
+model Order {
+  id           Int         @id @default(autoincrement())
+  orderNumber  String      @unique
+  dateIssued   DateTime    @default(now())
+  deliveryDate DateTime
+  totalAmount  Decimal     @db.Decimal(10, 2)
+  currency     String      @default("PLN")
+  status       OrderStatus @default(NOWE)
+  items        Json        // Lista produktów
+  supplierId   Int
+  supplier     Supplier    @relation(fields: [supplierId], references: [id])
+}
