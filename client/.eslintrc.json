@@ -1,0 +1,18 @@
+
+{
+  "extends": [
+    "airbnb",
+    "airbnb-typescript",
+    "airbnb/hooks"
+  ],
+  "parserOptions": {
+    "project": "./tsconfig.app.json"
+  },
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "import/prefer-default-export": "off",
+    "react/function-component-definition": "off",
+    "react/require-default-props": "off",
+    "jsx-a11y/label-has-associated-control": "off"
+  }
+}
