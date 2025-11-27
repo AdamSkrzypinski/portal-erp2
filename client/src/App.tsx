@@ -7,19 +7,33 @@ import { OrdersTable } from './components/OrdersTable';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchOrders = async () => {
     setLoading(true);
+    setError(null);
     try {
       const response = await apiClient.get<Order[]>('/orders');
       setOrders(response.data);
     } catch (err) {
-      console.error('Błąd pobierania:', err);
+      console.error(err);
+      setError('Nie udało się pobrać listy zamówień.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleConfirmOrder = async (id: number) => {
+    try {
+      await apiClient.patch(`/orders/${id}/status`, {
+        status: 'POTWIERDZONE'
+      });
+      fetchOrders();
+    } catch (err) {
+      console.error(err);
+      alert('Wystąpił błąd podczas potwierdzania zamówienia.');
     }
   };
 
@@ -33,18 +47,21 @@ function App() {
     return <LoginForm onLogin={() => setIsLoggedIn(true)} />;
   }
 
-
   return (
-    <div className="card">
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+    <div className="app-card">
+      <header className="app-header">
         <h1>Portal Dostawcy - Firma Sp. j.</h1>
-        <button onClick={() => setIsLoggedIn(false)} style={{ background: '#666' }}>Wyloguj</button>
+        <button onClick={() => setIsLoggedIn(false)} className="logout-btn">
+          Wyloguj
+        </button>
       </header>
       
-      {loading ? (
-        <p>Ładowanie zamówień z systemu ERP...</p>
-      ) : (
-        <OrdersTable orders={orders} />
+      {loading && <p className="loading-msg">Ładowanie zamówień z systemu ERP...</p>}
+      
+      {error && <p className="error-msg">{error}</p>}
+
+      {!loading && !error && (
+        <OrdersTable orders={orders} onConfirmOrder={handleConfirmOrder} />
       )}
     </div>
   );
