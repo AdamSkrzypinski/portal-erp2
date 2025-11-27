@@ -1,35 +1,53 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from 'react';
+import apiClient from './apiClient';
+import type { Order } from './types';
+import './App.scss';
+import { LoginForm } from './components/LoginForm';
+import { OrdersTable } from './components/OrdersTable';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const response = await apiClient.get<Order[]>('/orders');
+      setOrders(response.data);
+    } catch (err) {
+      console.error('Błąd pobierania:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchOrders();
+    }
+  }, [isLoggedIn]);
+
+  if (!isLoggedIn) {
+    return <LoginForm onLogin={() => setIsLoggedIn(true)} />;
+  }
+
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="card">
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h1>Portal Dostawcy - Firma Sp. j.</h1>
+        <button onClick={() => setIsLoggedIn(false)} style={{ background: '#666' }}>Wyloguj</button>
+      </header>
+      
+      {loading ? (
+        <p>Ładowanie zamówień z systemu ERP...</p>
+      ) : (
+        <OrdersTable orders={orders} />
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
