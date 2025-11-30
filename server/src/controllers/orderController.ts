@@ -19,12 +19,15 @@ export const getOrders = async (req: ExpressRequest, res: ExpressResponse) => {
 
 export const updateOrderStatus = async (req: ExpressRequest, res: ExpressResponse) => {
   const { id } = req.params;
-  const { status } = req.body;
+  const { status, comment } = req.body;
 
   try {
     const updatedOrder = await prisma.order.update({
       where: { id: Number(id) },
-      data: { status },
+      data: { 
+        status,
+        comment, 
+      },
     });
     res.json(updatedOrder);
   } catch (error) {

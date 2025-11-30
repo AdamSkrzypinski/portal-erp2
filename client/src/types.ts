@@ -16,6 +16,7 @@ export interface Order {
   currency: string;
   status: OrderStatus;
   items: any;
+  comment?: string;
   supplierId: number;
   supplier?: Supplier;
 }

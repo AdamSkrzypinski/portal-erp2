@@ -71,17 +71,17 @@ export function LoginForm({ onLogin }: LoginFormProps) {
         <h3>Dane do logowania dla testowania aplikacji</h3>
         <ul>
           <li>
-            <strong>Dostawca 1:</strong>
+            <strong>Dostawca 1 (Stal i Profile):</strong>
             <code>dostawca1@firma.pl</code>
             <code>testowy1</code>
           </li>
           <li>
-            <strong>Dostawca 2:</strong>
+            <strong>Dostawca 2 (Elektronika):</strong>
             <code>dostawca2@firma.pl</code>
             <code>testowy2</code>
           </li>
           <li>
-            <strong>Dostawca 3:</strong>
+            <strong>Dostawca 3 (Opakowania i BHP):</strong>
             <code>dostawca3@firma.pl</code>
             <code>testowy3</code>
           </li>
