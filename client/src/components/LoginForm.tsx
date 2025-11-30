@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import apiClient from '../apiClient';
 import './LoginForm.scss';
 
 interface LoginFormProps {
@@ -9,18 +10,26 @@ export function LoginForm({ onLogin }: LoginFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-  
-    const validUsers = ['dostawca1@firma.pl', 'dostawca2@firma.pl', 'dostawca3@firma.pl'];
-    const validPass = ['testowy1', 'testowy2', 'testowy3'];
+    setError('');
+    setLoading(true);
 
-    if (validUsers.includes(email) && validPass.includes(password)) {
+    try {
+      const response = await apiClient.post('/auth/login', {
+        email,
+        password,
+      });
+
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
       onLogin();
-    } else {
+    } catch (err) {
       setError('Błędny login lub hasło.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -37,6 +46,7 @@ export function LoginForm({ onLogin }: LoginFormProps) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            disabled={loading}
           />
         </div>
         <div className="form-group">
@@ -46,13 +56,14 @@ export function LoginForm({ onLogin }: LoginFormProps) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={loading}
           />
         </div>
         
         {error && <p className="error-message">{error}</p>}
         
-        <button type="submit" className="login-button">
-          Zaloguj się
+        <button type="submit" className="login-button" disabled={loading}>
+          {loading ? 'Logowanie...' : 'Zaloguj się'}
         </button>
       </form>
 
@@ -63,19 +74,16 @@ export function LoginForm({ onLogin }: LoginFormProps) {
             <strong>Dostawca 1:</strong>
             <code>dostawca1@firma.pl</code>
             <code>testowy1</code>
-
           </li>
           <li>
             <strong>Dostawca 2:</strong>
             <code>dostawca2@firma.pl</code>
             <code>testowy2</code>
-
           </li>
           <li>
             <strong>Dostawca 3:</strong>
             <code>dostawca3@firma.pl</code>
             <code>testowy3</code>
-
           </li>
         </ul>
       </div>

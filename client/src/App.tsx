@@ -11,6 +11,21 @@ function App() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Sprawdź przy starcie, czy mamy token
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setIsLoggedIn(false);
+    setOrders([]);
+  };
+
   const fetchOrders = async () => {
     setLoading(true);
     setError(null);
@@ -51,7 +66,7 @@ function App() {
     <div className="app-card">
       <header className="app-header">
         <h1>Portal Dostawcy - Firma Sp. j.</h1>
-        <button onClick={() => setIsLoggedIn(false)} className="logout-btn">
+        <button onClick={handleLogout} className="logout-btn">
           Wyloguj
         </button>
       </header>
