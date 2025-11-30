@@ -1,0 +1,74 @@
+.orders-table-container {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 8px;
+  background-color: #222;
+  margin-top: 20px;
+  border: 1px solid #444;
+}
+.orders-table-container .orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+  color: #f5f5f5;
+}
+.orders-table-container .orders-table thead tr {
+  background-color: #009879;
+  color: #ffffff;
+  text-align: left;
+}
+.orders-table-container .orders-table th, .orders-table-container .orders-table td {
+  padding: 15px;
+  white-space: nowrap;
+}
+.orders-table-container .orders-table tbody tr {
+  border-bottom: 1px solid #444;
+  -webkit-transition: background-color 0.2s;
+  transition: background-color 0.2s;
+}
+.orders-table-container .orders-table tbody tr:nth-of-type(even) {
+  background-color: #2a2a2a;
+}
+.orders-table-container .orders-table tbody tr:hover {
+  background-color: #2c2c2c;
+}
+.orders-table-container .orders-table .status-badge {
+  padding: 6px 12px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: inline-block;
+  text-align: center;
+  min-width: 90px;
+}
+.orders-table-container .orders-table .status-badge.status-NOWE {
+  background: #ffd700;
+  color: #000;
+}
+.orders-table-container .orders-table .status-badge.status-POTWIERDZONE {
+  background: #28a745;
+  color: #fff;
+}
+.orders-table-container .orders-table .status-badge.status-ODRZUCONE {
+  background: #dc3545;
+  color: #fff;
+}
+.orders-table-container .orders-table .status-badge.status-WYSLANE {
+  background: #17a2b8;
+  color: #fff;
+}
+.orders-table-container .orders-table .action-btn {
+  background-color: #009879;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  -webkit-transition: opacity 0.2s;
+  transition: opacity 0.2s;
+}
+.orders-table-container .orders-table .action-btn:hover {
+  opacity: 0.9;
+}/*# sourceMappingURL=OrdersTable.css.map */

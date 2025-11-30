@@ -13,10 +13,14 @@ export function LoginForm({ onLogin }: LoginFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (email === 'jan@stal-met.pl' && password === 'haslo123') {
+  
+    const validUsers = ['dostawca1@firma.pl', 'dostawca2@firma.pl', 'dostawca3@firma.pl'];
+    const validPass = ['testowy1', 'testowy2', 'testowy3'];
+
+    if (validUsers.includes(email) && validPass.includes(password)) {
       onLogin();
     } else {
-      setError('Błędny login lub hasło (Spróbuj: jan@stal-met.pl / haslo123)');
+      setError('Błędny login lub hasło.');
     }
   };
 
@@ -51,6 +55,30 @@ export function LoginForm({ onLogin }: LoginFormProps) {
           Zaloguj się
         </button>
       </form>
+
+      <div className="demo-credentials">
+        <h3>Dane do logowania dla testowania aplikacji</h3>
+        <ul>
+          <li>
+            <strong>Dostawca 1:</strong>
+            <code>dostawca1@firma.pl</code>
+            <code>testowy1</code>
+
+          </li>
+          <li>
+            <strong>Dostawca 2:</strong>
+            <code>dostawca2@firma.pl</code>
+            <code>testowy2</code>
+
+          </li>
+          <li>
+            <strong>Dostawca 3:</strong>
+            <code>dostawca3@firma.pl</code>
+            <code>testowy3</code>
+
+          </li>
+        </ul>
+      </div>
     </div>
   );
 }
