@@ -1,11 +1,18 @@
 import { Request as ExpressRequest, Response as ExpressResponse } from 'express';
 import prisma from '../prismaClient';
+import { AuthRequest } from '../middleware/authMiddleware';
 
 export const getOrders = async (req: ExpressRequest, res: ExpressResponse) => {
+  const authReq = req as AuthRequest;
+  
+  if (!authReq.user) {
+    return res.status(401).json({ error: 'Użytkownik niezalogowany' });
+  }
+
   try {
     const orders = await prisma.order.findMany({
-      include: {
-        supplier: true,
+      where: {
+        supplierId: authReq.user.userId,
       },
       orderBy: {
         dateIssued: 'desc',
@@ -26,7 +33,7 @@ export const updateOrderStatus = async (req: ExpressRequest, res: ExpressRespons
       where: { id: Number(id) },
       data: { 
         status,
-        comment, 
+        comment,
       },
     });
     res.json(updatedOrder);
