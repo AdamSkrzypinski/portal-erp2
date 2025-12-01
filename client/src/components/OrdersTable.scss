@@ -15,7 +15,7 @@ $border-color: #444;
   .orders-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 800px;
+    min-width: 900px;
     color: $text-color;
 
     thead tr {
@@ -27,6 +27,7 @@ $border-color: #444;
     th, td {
       padding: 15px;
       white-space: nowrap;
+      vertical-align: middle;
     }
 
     tbody tr {
@@ -77,14 +78,55 @@ $border-color: #444;
       background-color: $primary-color;
       color: white;
       border: none;
-      padding: 8px 16px;
+      padding: 8px 12px;
       border-radius: 4px;
       cursor: pointer;
       font-weight: bold;
-      transition: opacity 0.2s;
+      transition: all 0.2s;
+      min-width: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
-      &:hover {
+      &:hover:not(:disabled) {
         opacity: 0.9;
+        transform: translateY(-1px);
+      }
+
+      &:disabled {
+        background-color: #444 !important;
+        color: #777;
+        cursor: not-allowed;
+        opacity: 0.6;
+        transform: none;
+      }
+    }
+
+    .pdf-btn {
+      text-decoration: none;
+      color: #4faeff;
+      background-color: transparent;
+      font-weight: bold;
+      font-size: 0.9em;
+      border: 1px solid #4faeff;
+      padding: 6px 12px;
+      border-radius: 4px;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-block;
+      text-align: center;
+      font-family: inherit;
+
+      &:hover:not(:disabled) {
+        background-color: rgba(79, 174, 255, 0.1);
+      }
+
+      &:disabled {
+        color: #555;
+        border-color: #555;
+        cursor: not-allowed;
+        opacity: 0.6;
       }
     }
   }

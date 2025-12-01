@@ -51,76 +51,84 @@ export function OrdersTable({ orders, onUpdateOrder }: OrdersTableProps) {
             </tr>
           </thead>
           <tbody>
-            {orders.map((order) => (
-              <tr key={order.id}>
-                <td style={{ fontWeight: 500 }}>{order.orderNumber}</td>
-                <td style={{ color: '#aaa' }}>
-                  {new Date(order.deliveryDate).toLocaleDateString('pl-PL')}
-                </td>
-                <td>{formatCurrency(order.totalAmount, order.currency)}</td>
-                <td>
-                  <span className={`status-badge status-${order.status}`}>
-                    {order.status}
-                  </span>
-                </td>
-                <td style={{ fontSize: '0.85em', color: '#ccc', maxWidth: '200px', whiteSpace: 'normal' }}>
-                  {order.comment || '-'}
-                </td>
-                <td>
-                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                    
-                    <button 
-                      type="button" 
-                      className="action-btn"
-                      style={{ backgroundColor: '#6c757d', display: 'flex', alignItems: 'center', gap: '5px' }}
-                      onClick={() => handleOpenModal(order, 'DETAILS')}
-                    >
-                      <span>🔍</span> Podgląd
-                    </button>
+            {orders.map((order) => {
+              const isActionable = order.status === 'NOWE';
+              const isPdfAvailable = order.status === 'POTWIERDZONE' || order.status === 'WYSLANE';
 
-                    {order.status === 'NOWE' && (
-                      <>
-                        <button 
-                          type="button" 
-                          className="action-btn"
-                          style={{ backgroundColor: '#28a745' }}
-                          onClick={() => handleOpenModal(order, 'CONFIRM')}
-                        >
-                          ✔
-                        </button>
-                        <button 
-                          type="button" 
-                          className="action-btn"
-                          style={{ backgroundColor: '#dc3545' }}
-                          onClick={() => handleOpenModal(order, 'REJECT')}
-                        >
-                          ✖
-                        </button>
-                      </>
-                    )}
-
-                    {order.status === 'POTWIERDZONE' && (
-                      <PDFDownloadLink
-                        document={<OrderPdfDocument order={order} />}
-                        fileName={`Zamowienie_${order.orderNumber.replace(/\//g, '-')}.pdf`}
-                        style={{
-                          textDecoration: 'none',
-                          color: '#4faeff',
-                          fontWeight: 'bold',
-                          fontSize: '0.9em',
-                          border: '1px solid #4faeff',
-                          padding: '6px 12px',
-                          borderRadius: '4px',
-                          whiteSpace: 'nowrap'
-                        }}
+              return (
+                <tr key={order.id}>
+                  <td style={{ fontWeight: 500 }}>{order.orderNumber}</td>
+                  <td style={{ color: '#aaa' }}>
+                    {new Date(order.deliveryDate).toLocaleDateString('pl-PL')}
+                  </td>
+                  <td>{formatCurrency(order.totalAmount, order.currency)}</td>
+                  <td>
+                    <span className={`status-badge status-${order.status}`}>
+                      {order.status}
+                    </span>
+                  </td>
+                  <td style={{ fontSize: '0.85em', color: '#ccc', maxWidth: '200px', whiteSpace: 'normal' }}>
+                    {order.comment || '-'}
+                  </td>
+                  <td>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      
+                      <button 
+                        type="button" 
+                        className="action-btn"
+                        style={{ backgroundColor: '#6c757d', display: 'flex', alignItems: 'center', gap: '5px' }}
+                        onClick={() => handleOpenModal(order, 'DETAILS')}
+                        title="Zobacz szczegóły zamówienia"
                       >
-                        {({ loading }) => (loading ? '...' : 'PDF')}
-                      </PDFDownloadLink>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
+                        <span>🔍</span> Podgląd
+                      </button>
+
+                      <button 
+                        type="button" 
+                        className="action-btn"
+                        style={{ backgroundColor: '#28a745' }}
+                        onClick={() => isActionable && handleOpenModal(order, 'CONFIRM')}
+                        disabled={!isActionable}
+                        title={isActionable ? "Potwierdź przyjęcie zamówienia" : "Zamówienie już przetworzone"}
+                      >
+                        ✔
+                      </button>
+
+                      <button 
+                        type="button" 
+                        className="action-btn"
+                        style={{ backgroundColor: '#dc3545' }}
+                        onClick={() => isActionable && handleOpenModal(order, 'REJECT')}
+                        disabled={!isActionable}
+                        title={isActionable ? "Odrzuć zamówienie" : "Zamówienie już przetworzone"}
+                      >
+                        ✖
+                      </button>
+
+                      {isPdfAvailable ? (
+                        <PDFDownloadLink
+                          document={<OrderPdfDocument order={order} />}
+                          fileName={`Zamowienie_${order.orderNumber.replace(/\//g, '-')}.pdf`}
+                          className="pdf-btn"
+                          title="Pobierz potwierdzenie PDF"
+                        >
+                          {({ loading }) => (loading ? '...' : 'PDF')}
+                        </PDFDownloadLink>
+                      ) : (
+                        <button 
+                          className="pdf-btn" 
+                          disabled 
+                          title="PDF dostępny tylko po potwierdzeniu"
+                        >
+                          PDF
+                        </button>
+                      )}
+
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
