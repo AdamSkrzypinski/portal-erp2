@@ -2,11 +2,15 @@ import { useEffect, useState } from 'react';
 import apiClient from './apiClient';
 import type { Order } from './types';
 import './App.scss';
+
 import { LoginForm } from './components/LoginForm';
 import { OrdersTable } from './components/OrdersTable';
+import { LogoutScreen } from './components/LogoutScreen';
+import { Header } from './components/Header';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,11 +28,16 @@ function App() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setIsLoggedIn(false);
-    setOrders([]);
-    setUserName('');
+    setIsLoggingOut(true);
+    
+    setTimeout(() => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setIsLoggedIn(false);
+      setIsLoggingOut(false);
+      setOrders([]);
+      setUserName('');
+    }, 1500);
   };
 
   const fetchOrders = async () => {
@@ -66,11 +75,13 @@ function App() {
     if (isLoggedIn) {
       fetchOrders();
       const user = localStorage.getItem('user');
-      if (user) {
-        setUserName(JSON.parse(user).name);
-      }
+      if (user) setUserName(JSON.parse(user).name);
     }
   }, [isLoggedIn]);
+
+  if (isLoggingOut) {
+    return <LogoutScreen />;
+  }
 
   if (!isLoggedIn) {
     return <LoginForm onLogin={() => setIsLoggedIn(true)} />;
@@ -78,19 +89,7 @@ function App() {
 
   return (
     <div className="app-card">
-      <header className="app-header">
-        <h1>Portal Dostawcy - Firma Sp. j.</h1>
-        
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-          <div style={{ textAlign: 'right', fontSize: '0.9rem', color: '#ccc' }}>
-            Zalogowany jako:<br />
-            <strong style={{ color: '#009879' }}>{userName}</strong>
-          </div>
-          <button onClick={handleLogout} className="logout-btn">
-            Wyloguj
-          </button>
-        </div>
-      </header>
+      <Header userName={userName} onLogout={handleLogout} />
       
       {loading && <p className="loading-msg">Ładowanie zamówień z systemu ERP...</p>}
       {error && <p className="error-msg">{error}</p>}

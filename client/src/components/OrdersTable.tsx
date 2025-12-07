@@ -12,7 +12,7 @@ interface OrdersTableProps {
 
 export function OrdersTable({ orders, onUpdateOrder }: OrdersTableProps) {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [actionType, setActionType] = useState<'CONFIRM' | 'REJECT' | 'DETAILS' | null>(null);
+  const [actionType, setActionType] = useState<'CONFIRM' | 'REJECT' | 'DETAILS' | 'SEND' | null>(null);
 
   const formatCurrency = (amount: string, currency: string) => {
     return new Intl.NumberFormat('pl-PL', {
@@ -21,7 +21,7 @@ export function OrdersTable({ orders, onUpdateOrder }: OrdersTableProps) {
     }).format(Number(amount));
   };
 
-  const handleOpenModal = (order: Order, type: 'CONFIRM' | 'REJECT' | 'DETAILS') => {
+  const handleOpenModal = (order: Order, type: 'CONFIRM' | 'REJECT' | 'DETAILS' | 'SEND') => {
     setSelectedOrder(order);
     setActionType(type);
   };
@@ -52,13 +52,16 @@ export function OrdersTable({ orders, onUpdateOrder }: OrdersTableProps) {
           </thead>
           <tbody>
             {orders.map((order) => {
-              const isActionable = order.status === 'NOWE';
-              const isPdfAvailable = order.status === 'POTWIERDZONE' || order.status === 'WYSLANE';
+              const isNew = order.status === 'NOWE';
+              const isConfirmed = order.status === 'POTWIERDZONE';
+              const isSent = order.status === 'WYSLANE';
+              
+              const isPdfAvailable = isConfirmed || isSent;
 
               return (
                 <tr key={order.id}>
-                  <td style={{ fontWeight: 500 }}>{order.orderNumber}</td>
-                  <td style={{ color: '#aaa' }}>
+                  <td className="col-order-number">{order.orderNumber}</td>
+                  <td className="col-date">
                     {new Date(order.deliveryDate).toLocaleDateString('pl-PL')}
                   </td>
                   <td>{formatCurrency(order.totalAmount, order.currency)}</td>
@@ -67,42 +70,56 @@ export function OrdersTable({ orders, onUpdateOrder }: OrdersTableProps) {
                       {order.status}
                     </span>
                   </td>
-                  <td style={{ fontSize: '0.85em', color: '#ccc', maxWidth: '200px', whiteSpace: 'normal' }}>
+                  <td className="col-comment">
                     {order.comment || '-'}
                   </td>
                   <td>
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <div className="actions-container">
                       
                       <button 
                         type="button" 
-                        className="action-btn"
-                        style={{ backgroundColor: '#6c757d', display: 'flex', alignItems: 'center', gap: '5px' }}
+                        className="action-btn btn-details"
                         onClick={() => handleOpenModal(order, 'DETAILS')}
                         title="Zobacz szczegóły zamówienia"
                       >
-                        <span>🔍</span> Podgląd
+                        <span>🔍</span>
                       </button>
 
                       <button 
                         type="button" 
-                        className="action-btn"
-                        style={{ backgroundColor: '#28a745' }}
-                        onClick={() => isActionable && handleOpenModal(order, 'CONFIRM')}
-                        disabled={!isActionable}
-                        title={isActionable ? "Potwierdź przyjęcie zamówienia" : "Zamówienie już przetworzone"}
+                        className="action-btn btn-confirm"
+                        onClick={() => isNew && handleOpenModal(order, 'CONFIRM')}
+                        disabled={!isNew}
+                        title={isNew ? "Potwierdź przyjęcie zamówienia" : "Niedostępne"}
                       >
                         ✔
                       </button>
 
                       <button 
                         type="button" 
-                        className="action-btn"
-                        style={{ backgroundColor: '#dc3545' }}
-                        onClick={() => isActionable && handleOpenModal(order, 'REJECT')}
-                        disabled={!isActionable}
-                        title={isActionable ? "Odrzuć zamówienie" : "Zamówienie już przetworzone"}
+                        className="action-btn btn-reject"
+                        onClick={() => isNew && handleOpenModal(order, 'REJECT')}
+                        disabled={!isNew}
+                        title={isNew ? "Odrzuć zamówienie" : "Niedostępne"}
                       >
                         ✖
+                      </button>
+
+                      <button type="button" 
+                        className="action-btn btn-send"
+                        onClick={() => isConfirmed && handleOpenModal(order, 'SEND')}
+                        disabled={!isConfirmed}
+                        title={isConfirmed ? "Oznacz jako wysłane i dodaj nr przewozowy" : "Wymaga potwierdzenia"}
+                      >
+                        <svg 
+                          xmlns="http://www.w3.org/2000/svg" 
+                          viewBox="0 0 24 24" 
+                          fill="currentColor" 
+                          width="18" 
+                          height="18"
+                        >
+                          <path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                        </svg>
                       </button>
 
                       {isPdfAvailable ? (
@@ -118,7 +135,7 @@ export function OrdersTable({ orders, onUpdateOrder }: OrdersTableProps) {
                         <button 
                           className="pdf-btn" 
                           disabled 
-                          title="PDF dostępny tylko po potwierdzeniu"
+                          title="PDF dostępny po potwierdzeniu"
                         >
                           PDF
                         </button>

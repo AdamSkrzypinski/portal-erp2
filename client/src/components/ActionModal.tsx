@@ -4,7 +4,7 @@ import './ActionModal.scss';
 
 interface ActionModalProps {
   order: Order;
-  actionType: 'CONFIRM' | 'REJECT' | 'DETAILS'; // Nowy typ DETAILS
+  actionType: 'CONFIRM' | 'REJECT' | 'DETAILS' | 'SEND'; // Dodano SEND
   onClose: () => void;
   onSubmit: (id: number, status: string, comment: string) => void;
 }
@@ -12,15 +12,19 @@ interface ActionModalProps {
 export function ActionModal({ order, actionType, onClose, onSubmit }: ActionModalProps) {
   const [comment, setComment] = useState('');
 
-  // Jeśli otwieramy szczegóły, wpisz istniejący komentarz z bazy do pola
   useEffect(() => {
-    if (actionType === 'DETAILS' && order.comment) {
+    if ((actionType === 'DETAILS' || actionType === 'SEND') && order.comment) {
       setComment(order.comment);
     }
   }, [actionType, order]);
 
   const handleSubmit = () => {
-    const status = actionType === 'CONFIRM' ? 'POTWIERDZONE' : 'ODRZUCONE';
+    let status = '';
+    switch (actionType) {
+      case 'CONFIRM': status = 'POTWIERDZONE'; break;
+      case 'REJECT': status = 'ODRZUCONE'; break;
+      case 'SEND': status = 'WYSLANE'; break; 
+    }
     onSubmit(order.id, status, comment);
   };
 
@@ -29,6 +33,16 @@ export function ActionModal({ order, actionType, onClose, onSubmit }: ActionModa
       case 'CONFIRM': return 'Potwierdzenie Zamówienia';
       case 'REJECT': return 'Odrzucenie Zamówienia';
       case 'DETAILS': return 'Szczegóły Zamówienia';
+      case 'SEND': return 'Potwierdzenie Wysyłki';
+      default: return '';
+    }
+  };
+
+  const getButtonLabel = () => {
+    switch (actionType) {
+      case 'CONFIRM': return 'Zatwierdź';
+      case 'REJECT': return 'Odrzuć Zamówienie';
+      case 'SEND': return 'Zaznacz jako Wysłane';
       default: return '';
     }
   };
@@ -40,8 +54,6 @@ export function ActionModal({ order, actionType, onClose, onSubmit }: ActionModa
         
         <div className="order-details">
           <p><strong>Numer:</strong> {order.orderNumber}</p>
-          <p><strong>Data dostawy:</strong> {new Date(order.deliveryDate).toLocaleDateString('pl-PL')}</p>
-          <p><strong>Kwota:</strong> {order.totalAmount} {order.currency}</p>
           <p><strong>Produkty:</strong></p>
           <ul style={{ paddingLeft: '20px', margin: '5px 0' }}>
             {Array.isArray(order.items) && order.items.map((item: any, idx: number) => (
@@ -50,19 +62,20 @@ export function ActionModal({ order, actionType, onClose, onSubmit }: ActionModa
           </ul>
         </div>
 
-        {/* Sekcja komentarza */}
         <label style={{ display: 'block', marginBottom: '5px', fontSize: '0.9em' }}>
           {actionType === 'DETAILS' 
             ? 'Komentarz do zamówienia:' 
-            : `Komentarz ${actionType === 'REJECT' ? '(Wymagany powód)' : '(Opcjonalny)'}:`
+            : actionType === 'SEND'
+              ? 'Informacje o wysyłce (np. nr listu przewozowego):'
+              : `Komentarz ${actionType === 'REJECT' ? '(Wymagany powód)' : '(Opcjonalny)'}:`
           }
         </label>
         
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          disabled={actionType === 'DETAILS'} // Zablokuj edycję w trybie podglądu
-          placeholder={actionType === 'DETAILS' ? 'Brak komentarza.' : 'Wpisz treść...'}
+          disabled={actionType === 'DETAILS'}
+          placeholder={actionType === 'SEND' ? 'Np. Kurier DPD, nr 12345...' : 'Wpisz treść...'}
           style={actionType === 'DETAILS' ? { backgroundColor: '#333', color: '#ccc' } : {}}
         />
 
@@ -74,10 +87,10 @@ export function ActionModal({ order, actionType, onClose, onSubmit }: ActionModa
           {actionType !== 'DETAILS' && (
             <button 
               onClick={handleSubmit} 
-              className={actionType === 'CONFIRM' ? 'btn-confirm' : 'btn-reject'}
+              className={actionType === 'REJECT' ? 'btn-reject' : 'btn-confirm'}
               disabled={actionType === 'REJECT' && comment.trim().length === 0}
             >
-              {actionType === 'CONFIRM' ? 'Zatwierdź' : 'Odrzuć Zamówienie'}
+              {getButtonLabel()}
             </button>
           )}
         </div>

@@ -43,6 +43,21 @@ $border-color: #444;
       }
     }
 
+    .col-order-number {
+      font-weight: 500;
+    }
+
+    .col-date {
+      color: #aaa;
+    }
+
+    .col-comment {
+      font-size: 0.85em;
+      color: #ccc;
+      max-width: 200px;
+      white-space: normal; 
+    }
+
     .status-badge {
       padding: 6px 12px;
       border-radius: 50px;
@@ -53,29 +68,19 @@ $border-color: #444;
       text-align: center;
       min-width: 90px;
 
-      &.status-NOWE {
-        background: #ffd700;
-        color: #000;
-      }
+      &.status-NOWE { background: #ffd700; color: #000; }
+      &.status-POTWIERDZONE { background: #28a745; color: #fff; }
+      &.status-ODRZUCONE { background: #dc3545; color: #fff; }
+      &.status-WYSLANE { background: #17a2b8; color: #fff; }
+    }
 
-      &.status-POTWIERDZONE {
-        background: #28a745;
-        color: #fff;
-      }
-
-      &.status-ODRZUCONE {
-        background: #dc3545;
-        color: #fff;
-      }
-
-      &.status-WYSLANE {
-        background: #17a2b8;
-        color: #fff;
-      }
+    .actions-container {
+      display: flex;
+      gap: 8px;
+      align-items: center;
     }
 
     .action-btn {
-      background-color: $primary-color;
       color: white;
       border: none;
       padding: 8px 12px;
@@ -99,6 +104,23 @@ $border-color: #444;
         cursor: not-allowed;
         opacity: 0.6;
         transform: none;
+      }
+
+      &.btn-details {
+        background-color: #6c757d;
+        gap: 5px;
+      }
+
+      &.btn-confirm {
+        background-color: #28a745;
+      }
+
+      &.btn-reject {
+        background-color: #dc3545;
+      }
+
+      &.btn-send {
+        background-color: #17a2b8;
       }
     }
 
