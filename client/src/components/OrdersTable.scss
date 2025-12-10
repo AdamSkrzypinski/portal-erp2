@@ -1,3 +1,5 @@
+@use "sass:color";
+
 $primary-color: #009879;
 $text-color: #f5f5f5;
 $bg-color: #222;
@@ -30,6 +32,27 @@ $border-color: #444;
       vertical-align: middle;
     }
 
+    th.sortable {
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: color.adjust($primary-color, $lightness: -10%);
+      }
+
+      .sort-icon {
+        font-size: 0.8em;
+        margin-left: 5px;
+        opacity: 0.3;
+
+        &.active {
+          opacity: 1;
+          color: #ffd700;
+        }
+      }
+    }
+
     tbody tr {
       border-bottom: 1px solid $border-color;
       transition: background-color 0.2s;
@@ -43,20 +66,9 @@ $border-color: #444;
       }
     }
 
-    .col-order-number {
-      font-weight: 500;
-    }
-
-    .col-date {
-      color: #aaa;
-    }
-
-    .col-comment {
-      font-size: 0.85em;
-      color: #ccc;
-      max-width: 200px;
-      white-space: normal; 
-    }
+    .col-order-number { font-weight: 500; }
+    .col-date { color: #aaa; }
+    .col-comment { font-size: 0.85em; color: #ccc; max-width: 200px; white-space: normal; }
 
     .status-badge {
       padding: 6px 12px;
@@ -106,22 +118,10 @@ $border-color: #444;
         transform: none;
       }
 
-      &.btn-details {
-        background-color: #6c757d;
-        gap: 5px;
-      }
-
-      &.btn-confirm {
-        background-color: #28a745;
-      }
-
-      &.btn-reject {
-        background-color: #dc3545;
-      }
-
-      &.btn-send {
-        background-color: #17a2b8;
-      }
+      &.btn-details { background-color: #6c757d; gap: 5px; }
+      &.btn-confirm { background-color: #28a745; }
+      &.btn-reject { background-color: #dc3545; }
+      &.btn-send { background-color: #17a2b8; }
     }
 
     .pdf-btn {
