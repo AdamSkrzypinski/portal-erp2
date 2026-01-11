@@ -70,6 +70,14 @@ export function LoginForm({ onLogin }: LoginFormProps) {
       <div className="demo-credentials">
         <h3>Dane do logowania dla testowania aplikacji</h3>
         <ul>
+          
+          <li> 
+            <strong style={{ color: '#e75050' }}>Administrator (Dział Zakupów):</strong>
+            <code>zakupy@firma.pl</code>
+            <code>admin123</code>
+          </li>
+
+        
           <li>
             <strong>Dostawca 1 (Stal i Profile):</strong>
             <code>dostawca1@firma.pl</code>

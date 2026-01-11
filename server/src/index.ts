@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import orderRoutes from './routes/orderRoutes';
 import authRoutes from './routes/authRoutes';
+import adminRoutes from './routes/adminRoutes';
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get('/', (req: ExpressRequest, res: ExpressResponse) => {
   res.send('Serwer ERP II dla Firma Sp. J. działa poprawnie!');

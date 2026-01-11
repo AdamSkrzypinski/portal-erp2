@@ -4,43 +4,61 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
+  await prisma.auditLog.deleteMany();
   await prisma.order.deleteMany();
   await prisma.supplier.deleteMany();
 
   const salt = await bcrypt.genSalt(10);
-  const passwordHash1 = await bcrypt.hash('testowy1', salt);
-  const passwordHash2 = await bcrypt.hash('testowy2', salt);
-  const passwordHash3 = await bcrypt.hash('testowy3', salt);
+  
+  const passwordAdmin = await bcrypt.hash('admin123', salt);
+  const passwordSupp1 = await bcrypt.hash('testowy1', salt);
+  const passwordSupp2 = await bcrypt.hash('testowy2', salt);
+  const passwordSupp3 = await bcrypt.hash('testowy3', salt);
+
+  await prisma.supplier.create({
+    data: {
+      email: 'zakupy@firma.pl',
+      password: passwordAdmin,
+      name: 'Dział Zakupów (Admin)',
+      nip: '0000000000',
+      role: 'ADMIN',
+    },
+  });
 
   const supplier1 = await prisma.supplier.create({
     data: {
       email: 'dostawca1@firma.pl',
-      password: passwordHash1,
+      password: passwordSupp1,
       name: 'Testowy Dostawca 1 (Stal)',
       nip: '1111111111',
+      role: 'SUPPLIER',
     },
   });
 
   const supplier2 = await prisma.supplier.create({
     data: {
       email: 'dostawca2@firma.pl',
-      password: passwordHash2,
+      password: passwordSupp2,
       name: 'Testowy Dostawca 2 (Elektronika)',
       nip: '2222222222',
+      role: 'SUPPLIER',
     },
   });
 
   const supplier3 = await prisma.supplier.create({
     data: {
       email: 'dostawca3@firma.pl',
-      password: passwordHash3,
-      name: 'Testowy Dostawca 3 (Opakowania i BHP)',
+      password: passwordSupp3,
+      name: 'Testowy Dostawca 3 (Opakowania)',
       nip: '3333333333',
+      role: 'SUPPLIER',
     },
   });
 
+
+
   const ordersData = [
-    { num: 'PO/2025/10/001', date: '2025-10-01', del: '2025-10-10', amt: 15400.00, st: 'WYSLANE', items: [{ name: 'Blacha 5mm', qty: 100 }, { name: 'Profil 40x40', qty: 200 }], supp: supplier1.id, cmt: 'Dostawa kompletna.' },
+    { num: 'PO/2025/10/001', date: '2025-10-01', del: '2025-10-10', amt: 15400.00, st: 'WYSLANE', items: [{ name: 'Blacha 5mm', qty: 100 }, { name: 'Profil 40x40', qty: 200 }], supp: supplier1.id, cmt: 'Wysłano.' },
     { num: 'PO/2025/10/015', date: '2025-10-05', del: '2025-10-12', amt: 2200.00, st: 'WYSLANE', items: [{ name: 'Pręt gwintowany M8', qty: 500 }], supp: supplier1.id, cmt: 'Kurier DHL.' },
     { num: 'PO/2025/10/040', date: '2025-10-20', del: '2025-10-25', amt: 45000.00, st: 'WYSLANE', items: [{ name: 'Stal zbrojeniowa fi12', qty: 2000 }], supp: supplier1.id, cmt: 'Transport ciężarowy nr rej. WZ 12345.' },
     { num: 'PO/2025/11/002', date: '2025-11-02', del: '2025-11-15', amt: 8900.00, st: 'ODRZUCONE', items: [{ name: 'Profil HEB 200', qty: 10 }], supp: supplier1.id, cmt: 'Brak profilu na stanie, oczekiwanie na walcownię.' },

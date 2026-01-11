@@ -1,0 +1,65 @@
+// Importujemy zmienne lub definiujemy kolory lokalnie dla spójności
+$primary-color: #009879;
+$text-muted: #aaa;
+$text-secondary: #ccc;
+$border-color: #444;
+
+.audit-log-container {
+  // Rozszerza style kontenera tabeli, ale dodajemy specyficzne rzeczy tutaj
+  
+  .audit-header {
+    padding: 15px;
+    margin: 0;
+    color: #fff;
+    border-bottom: 1px solid $border-color;
+    background-color: #222;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .col-timestamp {
+    color: $text-muted;
+    font-size: 0.9rem;
+  }
+
+  .col-supplier {
+    strong {
+      color: $primary-color;
+    }
+  }
+
+  .col-order-ref {
+    font-weight: 500;
+  }
+
+  .col-action {
+    .action-title {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    
+    .change-diff {
+      font-size: 0.85em;
+      color: $text-secondary;
+      
+      .val-new {
+        color: #fff;
+        font-weight: 500;
+        margin-left: 4px;
+      }
+    }
+  }
+
+  .col-comment-audit {
+    font-style: italic;
+    color: $text-secondary;
+    font-size: 0.9em;
+    max-width: 250px;
+    white-space: normal;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 30px;
+    color: $text-muted;
+  }
+}

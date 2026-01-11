@@ -1,44 +1,35 @@
 import { useEffect, useState } from 'react';
 import apiClient from './apiClient';
-import type { Order } from './types';
+import type { Order, AuditLogEntry, User } from './types';
 import './App.scss';
 
 import { LoginForm } from './components/LoginForm';
 import { OrdersTable } from './components/OrdersTable';
 import { LogoutScreen } from './components/LogoutScreen';
 import { Header } from './components/Header';
+import { AuditLogTable } from './components/AuditLogTable';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  
+  const [user, setUser] = useState<User | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [logs, setLogs] = useState<AuditLogEntry[]>([]);
+  
+  const [currentView, setCurrentView] = useState<'ORDERS' | 'LOGS'>('ORDERS');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [userName, setUserName] = useState<string>('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
+    const storedUser = localStorage.getItem('user');
     
-    if (token && user) {
+    if (token && storedUser) {
       setIsLoggedIn(true);
-      const parsedUser = JSON.parse(user);
-      setUserName(parsedUser.name);
+      setUser(JSON.parse(storedUser));
     }
   }, []);
-
-  const handleLogout = () => {
-    setIsLoggingOut(true);
-    
-    setTimeout(() => {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      setIsLoggedIn(false);
-      setIsLoggingOut(false);
-      setOrders([]);
-      setUserName('');
-    }, 1500);
-  };
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -52,7 +43,20 @@ function App() {
       setOrders(parsedOrders);
     } catch (err) {
       console.error(err);
-      setError('Nie udało się pobrać listy zamówień.');
+      setError('Nie udało się pobrać danych.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchLogs = async () => {
+    setLoading(true);
+    try {
+      const response = await apiClient.get<AuditLogEntry[]>('/admin/logs');
+      setLogs(response.data);
+    } catch (err) {
+      console.error(err);
+      alert('Błąd pobierania historii.');
     } finally {
       setLoading(false);
     }
@@ -71,31 +75,81 @@ function App() {
     }
   };
 
+  const handleLogout = () => {
+    setIsLoggingOut(true);
+    setTimeout(() => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setIsLoggedIn(false);
+      setIsLoggingOut(false);
+      setOrders([]);
+      setLogs([]);
+      setUser(null);
+      setCurrentView('ORDERS');
+    }, 1500);
+  };
+
   useEffect(() => {
     if (isLoggedIn) {
       fetchOrders();
-      const user = localStorage.getItem('user');
-      if (user) setUserName(JSON.parse(user).name);
     }
   }, [isLoggedIn]);
+
+  const handleViewChange = (view: 'ORDERS' | 'LOGS') => {
+    setCurrentView(view);
+    if (view === 'ORDERS') fetchOrders();
+    if (view === 'LOGS') fetchLogs();
+  };
 
   if (isLoggingOut) {
     return <LogoutScreen />;
   }
 
   if (!isLoggedIn) {
-    return <LoginForm onLogin={() => setIsLoggedIn(true)} />;
+    return <LoginForm onLogin={() => window.location.reload()} />;
   }
 
   return (
     <div className="app-card">
-      <Header userName={userName} onLogout={handleLogout} />
+      <Header userName={user?.name || ''} onLogout={handleLogout} />
       
-      {loading && <p className="loading-msg">Ładowanie zamówień z systemu ERP...</p>}
+      {user?.role === 'ADMIN' && (
+        <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+          <button 
+            className="action-btn"
+            style={{ 
+              backgroundColor: currentView === 'ORDERS' ? '#009879' : '#333',
+              padding: '10px 20px',
+              fontSize: '1rem',
+              border: '1px solid #555'
+            }}
+            onClick={() => handleViewChange('ORDERS')}
+          >
+            📦 Zamówienia
+          </button>
+          
+          <button 
+            className="action-btn"
+            style={{ 
+              backgroundColor: currentView === 'LOGS' ? '#6f42c1' : '#333',
+              padding: '10px 20px',
+              fontSize: '1rem',
+              border: '1px solid #555'
+            }}
+            onClick={() => handleViewChange('LOGS')}
+          >
+            📜 Panel Administratora
+          </button>
+        </div>
+      )}
+
+      {loading && <p className="loading-msg">Ładowanie danych...</p>}
       {error && <p className="error-msg">{error}</p>}
 
       {!loading && !error && (
-        <OrdersTable orders={orders} onUpdateOrder={handleUpdateOrder} />
+        currentView === 'ORDERS' 
+          ? <OrdersTable orders={orders} onUpdateOrder={handleUpdateOrder} />
+          : <AuditLogTable logs={logs} />
       )}
     </div>
   );
