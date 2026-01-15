@@ -3,8 +3,14 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import prisma from '../prismaClient';
 
+
 export const login = async (req: ExpressRequest, res: ExpressResponse) => {
   const { email, password } = req.body;
+
+  if (!process.env.JWT_SECRET) {
+    console.error('FATAL ERROR: Brak JWT_SECRET w zmiennych środowiskowych.');
+    return res.status(500).json({ error: 'Błąd konfiguracji serwera.' });
+  }
 
   try {
     const supplier = await prisma.supplier.findUnique({
@@ -22,20 +28,26 @@ export const login = async (req: ExpressRequest, res: ExpressResponse) => {
     }
 
     const token = jwt.sign(
-      { userId: supplier.id, email: supplier.email },
-      process.env.JWT_SECRET as string,
-      { expiresIn: '1h' },
+      { 
+        userId: supplier.id, 
+        email: supplier.email,
+        role: supplier.role, 
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '4h' },
     );
 
-    res.json({
+    return res.json({
       token,
       user: {
         id: supplier.id,
         email: supplier.email,
         name: supplier.name,
+        role: supplier.role,
       },
     });
   } catch (error) {
-    res.status(500).json({ error: 'Błąd serwera podczas logowania.' });
+    console.error('Login error:', error);
+    return res.status(500).json({ error: 'Błąd serwera podczas logowania.' });
   }
 };
