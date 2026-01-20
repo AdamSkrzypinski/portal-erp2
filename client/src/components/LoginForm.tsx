@@ -43,7 +43,7 @@ export function LoginForm({ onLogin }: LoginFormProps) {
         <div className="warning-text">
           <strong>Ważna informacja:</strong>
           <span>
-            Aplikacja działa na darmowym serwerze z ograniczeniami. Pierwsze logowanie po okresie bezczynności może potrwać do <strong>60 sekund</strong> (wybudzanie).
+            Aplikacja działa na darmowym serwerze z ograniczeniami. Pierwsze logowanie po dłuższym okresie bezczynności może potrwać do <strong>60 sekund</strong> (wybudzanie).
             <br />
             Jeśli wystąpi błąd, odczekaj chwilę i spróbuj ponownie.
           </span>
