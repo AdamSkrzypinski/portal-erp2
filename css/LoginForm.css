@@ -16,7 +16,7 @@
           flex-direction: column;
   gap: 20px;
 }
-.login-card h2 {
+.login-card h2, .login-card h3 {
   margin-top: 0;
   color: #f5f5f5;
   text-align: center;
@@ -24,7 +24,36 @@
 .login-card p {
   color: #aaa;
   text-align: center;
+  margin-bottom: 0;
+}
+.login-card .server-warning {
+  background-color: rgba(255, 193, 7, 0.1);
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  padding: 12px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 12px;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
   margin-bottom: 10px;
+}
+.login-card .server-warning .warning-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.login-card .server-warning .warning-text {
+  font-size: 0.85rem;
+  color: #e0e0e0;
+  text-align: left;
+  line-height: 1.4;
+}
+.login-card .server-warning .warning-text strong {
+  display: block;
+  color: #ffc107;
+  margin-bottom: 4px;
 }
 .login-card form {
   display: -webkit-box;
@@ -69,6 +98,11 @@
 }
 .login-card form .login-button:hover {
   background-color: #007f65;
+}
+.login-card form .login-button:disabled {
+  background-color: #444;
+  cursor: not-allowed;
+  color: #aaa;
 }
 .login-card .demo-credentials {
   margin-top: 20px;
