@@ -8,6 +8,7 @@ import { OrdersTable } from './components/OrdersTable';
 import { LogoutScreen } from './components/LogoutScreen';
 import { Header } from './components/Header';
 import { AuditLogTable } from './components/AuditLogTable';
+import { Footer } from './components/Footer';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -151,7 +152,9 @@ function App() {
           ? <OrdersTable orders={orders} onUpdateOrder={handleUpdateOrder} />
           : <AuditLogTable logs={logs} />
       )}
+      <Footer />
     </div>
+    
   );
 }
 

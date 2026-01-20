@@ -1,0 +1,43 @@
+.audit-log-container .audit-header {
+  padding: 15px;
+  margin: 0;
+  color: #fff;
+  border-bottom: 1px solid #444;
+  background-color: #222;
+  border-radius: 8px 8px 0 0;
+}
+.audit-log-container .col-timestamp {
+  color: #aaa;
+  font-size: 0.9rem;
+}
+.audit-log-container .col-supplier strong {
+  color: #009879;
+}
+.audit-log-container .col-order-ref {
+  font-weight: 500;
+}
+.audit-log-container .col-action .action-title {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.audit-log-container .col-action .change-diff {
+  font-size: 0.85em;
+  color: #ccc;
+}
+.audit-log-container .col-action .change-diff .val-new {
+  color: #fff;
+  font-weight: 500;
+  margin-left: 4px;
+}
+.audit-log-container .col-comment-audit {
+  font-style: italic;
+  color: #ccc;
+  font-size: 0.9em;
+  max-width: 250px;
+  white-space: normal;
+}
+.audit-log-container .empty-state {
+  text-align: center;
+  padding: 30px;
+  color: #aaa;
+}/*# sourceMappingURL=AuditLogTable.css.map */
